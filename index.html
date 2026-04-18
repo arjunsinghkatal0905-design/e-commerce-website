@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flipkart Style Store</title>
+
+<style>
+body {
+  margin:0;
+  font-family: 'Poppins', sans-serif;
+  overflow-x:hidden;
+  background: linear-gradient(-45deg, #74ebd5, #ACB6E5, #ff9a9e, #fad0c4);
+  background-size: 400% 400%;
+  animation: gradientBG 12s ease infinite;
+}
+
+@keyframes gradientBG {
+  0% { background-position:0% 50%; }
+  50% { background-position:100% 50%; }
+  100% { background-position:0% 50%; }
+}
+
+/* NAVBAR */
+header {
+  background:#2874f0;
+  color:white;
+  padding:15px 30px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.logo { font-size:22px; font-weight:bold; }
+
+.search {
+  padding:8px;
+  width:250px;
+  border-radius:20px;
+  border:none;
+}
+
+.cart {
+  font-size:20px;
+  cursor:pointer;
+}
+
+/* PAGES */
+.page { display:none; padding:20px; text-align:center; }
+.active { display:block; }
+
+/* INPUT */
+input, select {
+  width:260px;
+  padding:12px;
+  margin:10px;
+  border-radius:8px;
+  border:none;
+}
+
+/* BUTTON */
+button {
+  padding:12px 25px;
+  background: linear-gradient(45deg, #ff9f00, #ff3c00);
+  color:white;
+  border:none;
+  border-radius:25px;
+  cursor:pointer;
+}
+
+button:hover {
+  transform:scale(1.05);
+}
+
+/* PRODUCTS */
+.products {
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+
+.product {
+  background:rgba(255,255,255,0.2);
+  backdrop-filter:blur(15px);
+  border-radius:15px;
+  padding:15px;
+  margin:15px;
+  width:220px;
+}
+
+.product img {
+  width:100%;
+  height:150px;
+  border-radius:10px;
+}
+
+.price {
+  color:green;
+  font-weight:bold;
+}
+
+/* BOX */
+.summary-box {
+  background:white;
+  padding:20px;
+  border-radius:10px;
+  width:300px;
+  margin:auto;
+}
+
+/* THANK YOU */
+#thankyou h2 {
+  color:green;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="logo">🛒 Flipkart Clone</div>
+<input type="text" class="search" placeholder="Search...">
+<div class="cart" onclick="goToCart()">🛍️</div>
+</header>
+
+<!-- Welcome -->
+<div id="welcome" class="page active">
+<h2>Welcome</h2>
+<input type="text" id="username" placeholder="Enter your name"><br>
+<button onclick="goToGreeting()">Next</button>
+</div>
+
+<!-- Greeting -->
+<div id="greeting" class="page">
+<h2 id="welcomeText"></h2>
+<button onclick="goToForm()">Continue</button>
+</div>
+
+<!-- Form -->
+<div id="formPage" class="page">
+<h2>Enter Details</h2>
+<input type="text" id="name" placeholder="Name"><br>
+<input type="text" id="address" placeholder="Address"><br>
+<input type="text" id="phone" placeholder="Phone"><br>
+<input type="email" id="email" placeholder="Email"><br>
+
+<select id="payment">
+<option>Cash on Delivery</option>
+<option>UPI</option>
+<option>Card</option>
+</select><br>
+
+<button onclick="goToProducts()">Next</button>
+</div>
+
+<!-- Products -->
+<div id="products" class="page">
+<h2>Products</h2>
+
+<div class="products">
+
+<div class="product">
+<img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9">
+<h3>Phone</h3>
+<p class="price">₹10000</p>
+<button onclick="addToCart('Phone',10000)">Add to Cart</button>
+</div>
+
+<div class="product">
+<img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8">
+<h3>Laptop</h3>
+<p class="price">₹50000</p>
+<button onclick="addToCart('Laptop',50000)">Add to Cart</button>
+</div>
+
+<div class="product">
+<img src="https://images.unsplash.com/photo-1600180758890-6b94519a8ba3">
+<h3>Shoes</h3>
+<p class="price">₹2000</p>
+<button onclick="addToCart('Shoes',2000)">Add to Cart</button>
+</div>
+
+</div>
+</div>
+
+<!-- CART PAGE -->
+<div id="cartPage" class="page">
+<h2>Your Cart 🛒</h2>
+<div class="summary-box">
+<p id="cartItems"></p>
+<h3 id="totalPrice"></h3>
+<button onclick="goToConfirm()">Checkout</button>
+</div>
+</div>
+
+<!-- CONFIRM -->
+<div id="confirm" class="page">
+<h2>Order Summary</h2>
+<div class="summary-box">
+<div id="summary"></div>
+<button onclick="placeOrder()">Confirm Order</button>
+</div>
+</div>
+
+<!-- THANK YOU -->
+<div id="thankyou" class="page">
+<h2>🎉 Thank You!</h2>
+<p>Order placed successfully</p>
+</div>
+
+<script>
+let cart = [];
+
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function goToGreeting(){
+  let user = document.getElementById('username').value;
+  if(user === "") return alert("Enter name");
+  document.getElementById('welcomeText').innerText = "Welcome " + user;
+  showPage('greeting');
+}
+
+function goToForm(){ showPage('formPage'); }
+
+function goToProducts(){
+  let name = document.getElementById('name').value;
+  let phone = document.getElementById('phone').value;
+  if(name === "" || phone === "") return alert("Fill details");
+  showPage('products');
+}
+
+// ADD TO CART
+function addToCart(product, price){
+  cart.push({product, price});
+  alert(product + " added to cart");
+}
+
+// OPEN CART
+function goToCart(){
+  if(cart.length === 0) return alert("Cart empty");
+
+  let html = "";
+  let total = 0;
+
+  cart.forEach(item => {
+    html += item.product + " - ₹" + item.price + "<br>";
+    total += item.price;
+  });
+
+  document.getElementById('cartItems').innerHTML = html;
+  document.getElementById('totalPrice').innerText = "Total: ₹" + total;
+
+  showPage('cartPage');
+}
+
+// CONFIRM PAGE
+function goToConfirm(){
+  let name = document.getElementById('name').value;
+  let address = document.getElementById('address').value;
+  let phone = document.getElementById('phone').value;
+  let email = document.getElementById('email').value;
+  let payment = document.getElementById('payment').value;
+
+  let items = "";
+  let total = 0;
+
+  cart.forEach(item => {
+    items += item.product + " - ₹" + item.price + "<br>";
+    total += item.price;
+  });
+
+  document.getElementById('summary').innerHTML = `
+  Name: ${name}<br>
+  Address: ${address}<br>
+  Phone: ${phone}<br>
+  Email: ${email}<br>
+  Payment: ${payment}<br><br>
+  <b>Items:</b><br>${items}<br>
+  <b>Total: ₹${total}</b>
+  `;
+
+  showPage('confirm');
+}
+
+function placeOrder(){
+  showPage('thankyou');
+}
+</script>
+
+</body>
+</html>
